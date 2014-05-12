@@ -1,0 +1,12 @@
+{
+    "name": "Sloth",
+    "version": "0.9.2",
+    "description": "Making the web lazy in good way",
+    "homepage": "https://github.com/diegovilar/sloth",
+    "author": "Diego Vilar <diegovilar@gmail.com>",
+    "license": "The MIT License (MIT)",
+    "private": true,
+    "devDependencies": {
+        "script.js" : "2.5.3"
+    }
+}

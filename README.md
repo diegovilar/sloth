@@ -1,4 +1,4 @@
-sloth
-=====
+loader
+======
 
-Making the web lazy in good way
+Making the web lazy in a good way
