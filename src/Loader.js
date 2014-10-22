@@ -28,14 +28,38 @@
         return reCssUrl.test(path);
     }
 
-    // TODO
-    function absolutePath(path) {
+    // from Simon Lydell's https://github.com/lydell/resolve-url
+    function resolveUrl(/* ...urls */) {
 
-        /*if (!reAbsoluteUrl.test(path)) {
+        var numUrls = arguments.length;
 
-         }*/
+        if (numUrls === 0) {
+          throw new Error("resolveUrl requires at least one argument; got none.");
+        }
 
-        return path;
+        var base = document.createElement("base");
+        base.href = arguments[0];
+
+        if (numUrls === 1) {
+          return base.href;
+        }
+
+        var head = document.getElementsByTagName("head")[0];
+        head.insertBefore(base, head.firstChild);
+
+        var a = document.createElement("a");
+        var resolved;
+
+        var index;
+        for (index = 1; index < numUrls; index++) {
+          a.href = arguments[index];
+          resolved = a.href;
+          base.href = resolved;
+        }
+
+        head.removeChild(base);
+
+        return resolved;
     }
 
     function getNewId() {
@@ -80,6 +104,8 @@
     };
 
     Loader.prototype = {
+
+        resolveUrl : resolveUrl,
 
         _translatePath : function(path) {
 
@@ -127,7 +153,7 @@
             }
 
             // script
-            else if ((aux = this._getScript(targetName) || (isJsUrl(targetName) && (aux = this._getScript(absolutePath(targetName)))))) {
+            else if ((aux = this._getScript(targetName) || (isJsUrl(targetName) && (aux = this._getScript(resolveUrl(targetName)))))) {
                 target = {
                     type : TargetType.SCRIPT,
                     value : aux
@@ -135,7 +161,7 @@
             }
 
             // stylesheet
-            else if ((aux = this._getStylesheet(targetName) || (isCssUrl(targetName) && (aux = this._getStylesheet(absolutePath(targetName)))))) {
+            else if ((aux = this._getStylesheet(targetName) || (isCssUrl(targetName) && (aux = this._getStylesheet(resolveUrl(targetName)))))) {
                 target = {
                     type : TargetType.STYLESHEET,
                     value : aux
@@ -188,7 +214,7 @@
          */
         _registerScript : function(path) {
 
-            path = absolutePath(path);
+            path = resolveUrl(path);
 
             var script = this._getScript(path);
 
@@ -210,7 +236,7 @@
          */
         _registerStylesheet : function(path) {
 
-            path = absolutePath(path);
+            path = resolveUrl(path);
 
             var stylesheet = this._getStylesheet(path);
 
@@ -248,14 +274,14 @@
 
         _getScript : function(path) {
 
-            path = absolutePath(path);
+            path = resolveUrl(path);
             return this._scripts.hasOwnProperty(path) ? this._scripts[path] : null;
 
         },
 
         _getStylesheet : function(path) {
 
-            path = absolutePath(path);
+            path = resolveUrl(path);
             return this._stylesheets.hasOwnProperty(path) ? this._stylesheets[path] : null;
 
         },
